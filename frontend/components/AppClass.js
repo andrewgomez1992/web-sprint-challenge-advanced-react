@@ -1,6 +1,11 @@
 import React from 'react'
 
+
+
 export default class AppClass extends React.Component {
+
+
+
   render() {
     const { className } = this.props
     return (
