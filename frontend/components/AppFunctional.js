@@ -18,10 +18,11 @@ export default function AppFunctional(props) {
     grid: [null, null, null, null, "B", null, null, null, null,]
   })
 
+
   const [grid, setGrid] = useState(state.grid)
   const [steps, setSteps] = useState(0)
   const [message, setMessage] = useState("")
-
+  const [email, setEmail] = useState("")
 
   const getNextGrid = (e) => {
     const t = e.target.id
@@ -56,6 +57,12 @@ export default function AppFunctional(props) {
       setGrid(n)) : setMessage(`You can't go ${t}`)
   };
 
+  const reset = () => {
+    setGrid(state.grid)
+    setEmail("")
+    console.log(email)
+  }
+
   const { className } = props;
   return (
     <div id="wrapper" className={className}>
@@ -80,7 +87,7 @@ export default function AppFunctional(props) {
         <button id="up" onClick={getNextGrid}>UP</button>
         <button id="right" onClick={getNextGrid}>RIGHT</button>
         <button id="down" onClick={getNextGrid}>DOWN</button>
-        <button id="reset">reset</button>
+        <button id="reset" onClick={reset}>reset</button>
       </div>
       <form>
         <input
