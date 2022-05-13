@@ -11,6 +11,10 @@ export default class AppClass extends React.Component {
     grid: [null, null, null, null, "B", null, null, null, null,]
   }
 
+  emailState = {
+    email: "",
+  }
+
   getNextGrid = (e) => {
     const t = this.state.grid.indexOf("B")
     const n = [...this.state.grid];
@@ -64,13 +68,20 @@ export default class AppClass extends React.Component {
   reset = (e) => {
     this.setState({
       ...this.state,
+      email: "",
       message: "",
       email: "",
       steps: 0,
       grid: [null, null, null, null, "B", null, null, null, null,]
     })
     console.log('RESET NOT FCKIN WORKING FOR EMAIL')
+    this.myFormRef.reset();
   }
+
+  // resetEmail = () => {
+  //   this.myFormRef.reset();
+  // }
+
 
   render() {
     const { className } = this.props
@@ -97,9 +108,9 @@ export default class AppClass extends React.Component {
           <button id="up" onClick={this.move}>UP</button>
           <button id="right" onClick={this.move}>RIGHT</button>
           <button id="down" onClick={this.move}>DOWN</button>
-          <button id="reset" onClick={this.state}>reset</button>
+          <button id="reset" onClick={this.reset}>reset</button>
         </div>
-        <form onSubmit={this.onSubmit}>
+        <form ref={(el) => this.myFormRef = el} onSubmit={this.onSubmit}>
           <input
             id="email"
             type="email"
