@@ -1,24 +1,9 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
-
-const initialState = {
-  message: "",
-  email: "",
-  steps: 0,
-  grid: [null, null, null, null, "B", null, null, null, null,]
-}
-
 export default function AppFunctional(props) {
 
-
   const initialGrid = [null, null, null, null, "B", null, null, null, null]
-  const [state, setState] = useState({
-    message: "",
-    email: "",
-    steps: 0,
-    grid: [null, null, null, null, "B", null, null, null, null,]
-  })
 
   const ref = useRef()
   const [grid, setGrid] = useState(initialGrid)
@@ -28,7 +13,6 @@ export default function AppFunctional(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    e.target.reset(); // THIS RESET THE EMAIL!!!!!!
     const [x, y] = getXY();
     let res;
     axios.post('http://localhost:9000/api/result', {
@@ -105,7 +89,6 @@ export default function AppFunctional(props) {
     setGrid(initialGrid)
     setSteps(0)
     ref.current.value = "";
-    ref.form.reset();
   }
 
   const { className } = props;
@@ -142,8 +125,8 @@ export default function AppFunctional(props) {
           onChange={onChange}
           ref={ref}
         ></input>
-        <input type="submit"></input>
+        <input id="submit" type="submit"></input>
       </form>
-    </div>
+    </div >
   )
 }
