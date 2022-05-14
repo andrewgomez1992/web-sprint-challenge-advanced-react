@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
 
@@ -11,6 +11,8 @@ const initialState = {
 
 export default function AppFunctional(props) {
 
+
+  const initialGrid = [null, null, null, null, "B", null, null, null, null]
   const [state, setState] = useState({
     message: "",
     email: "",
@@ -18,11 +20,52 @@ export default function AppFunctional(props) {
     grid: [null, null, null, null, "B", null, null, null, null,]
   })
 
-
-  const [grid, setGrid] = useState(state.grid)
+  const ref = useRef()
+  const [grid, setGrid] = useState(initialGrid)
   const [steps, setSteps] = useState(0)
   const [message, setMessage] = useState("")
   const [email, setEmail] = useState("")
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    e.target.reset(); // THIS RESET THE EMAIL!!!!!!
+    const [x, y] = getXY();
+    let res;
+    axios.post('http://localhost:9000/api/result', {
+      email: email,
+      steps: steps,
+      x: x,
+      y: y
+    })
+      .then((e => {
+        res = e.data.message
+      }
+      )).catch((e => {
+        res = e.response.data.message
+      }
+      )).finally((() => {
+        setMessage(res),
+          setEmail("")
+      }
+      ))
+  }
+
+  const getXYMessage = () => {
+    const [e, t] = getXY();
+    return `Coordinates (${e}, ${t})`
+  }
+
+  const getXY = () => {
+    const e = grid.indexOf("B");
+    let t;
+    return e < 3 ? t = 1 : e < 6 ? t = 2 : e < 9 && (t = 3),
+      [e % 3 + 1, t]
+  }
+
+  const onChange = (e) => {
+    const { value: t } = e.target;
+    setEmail(t)
+  }
 
   const getNextGrid = (e) => {
     const t = e.target.id
@@ -57,17 +100,19 @@ export default function AppFunctional(props) {
       setGrid(n)) : setMessage(`You can't go ${t}`)
   };
 
-  const reset = () => {
-    setGrid(state.grid)
-    setEmail("")
-    console.log(email)
+  const reset = (e) => {
+    setMessage("")
+    setGrid(initialGrid)
+    setSteps(0)
+    ref.current.value = "";
+    ref.form.reset();
   }
 
   const { className } = props;
   return (
     <div id="wrapper" className={className}>
       <div className="info">
-        <h3 id="coordinates">error</h3>
+        <h3 id="coordinates">{getXYMessage()}</h3>
         <h3 id="steps">You moved {steps} time{1 == steps ? "" : "s"}</h3>
       </div>
       <div id="grid">
@@ -89,12 +134,13 @@ export default function AppFunctional(props) {
         <button id="down" onClick={getNextGrid}>DOWN</button>
         <button id="reset" onClick={reset}>reset</button>
       </div>
-      <form>
+      <form onSubmit={onSubmit} onSubmitCapture={reset}>
         <input
           id="email"
           type="email"
           placeholder="type email"
-        // onChange={onChange}
+          onChange={onChange}
+          ref={ref}
         ></input>
         <input type="submit"></input>
       </form>

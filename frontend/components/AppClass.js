@@ -1,5 +1,5 @@
-import React from 'react'
-
+import React from 'react';
+import axios from 'axios';
 
 
 export default class AppClass extends React.Component {
@@ -9,10 +9,6 @@ export default class AppClass extends React.Component {
     email: "",
     steps: 0,
     grid: [null, null, null, null, "B", null, null, null, null,]
-  }
-
-  emailState = {
-    email: "",
   }
 
   getNextGrid = (e) => {
@@ -42,6 +38,43 @@ export default class AppClass extends React.Component {
     return JSON.stringify(this.state.grid) === JSON.stringify(n) ? null : (n[t] = null, n)
   };
 
+  getXY = () => {
+    const e = this.state.grid.indexOf("B");
+    let t;
+    return e < 3 ? t = 1 : e < 6 ? t = 2 : e < 9 && (t = 3),
+      [e % 3 + 1, t]
+  }
+
+  getXYMessage = () => {
+    const [e, t] = this.getXY();
+    return `Coordinates (${e}, ${t})`
+  }
+
+  onSubmit = e => {
+    e.preventDefault();
+    e.target.reset();
+    const [t, n] = this.getXY()
+    let res;
+    axios.post("http://localhost:9000/api/result", {
+      email: this.state.email,
+      steps: this.state.steps,
+      x: t,
+      y: n
+    }).then((e => {
+      res = e.data.message
+    }
+    )).catch((e => {
+      res = e.response.data.message
+    }
+    )).finally(() => {
+      this.setState({
+        ...this.state,
+        message: res,
+      })
+    }
+    )
+  }
+
   move = e => {
     const t = e.target.id
     const next = this.getNextGrid(t);
@@ -56,31 +89,25 @@ export default class AppClass extends React.Component {
     })
   }
 
-  onSubmit = (e) => {
+  reset = (e) => {
     e.preventDefault()
     this.setState({
       ...this.state,
-      email: ""
-    })
-    console.log("wtf")
-  }
-
-  reset = (e) => {
-    this.setState({
-      ...this.state,
-      email: "",
       message: "",
       email: "",
       steps: 0,
       grid: [null, null, null, null, "B", null, null, null, null,]
     })
-    console.log('RESET NOT FCKIN WORKING FOR EMAIL')
     this.myFormRef.reset();
   }
 
-  // resetEmail = () => {
-  //   this.myFormRef.reset();
-  // }
+  onChange = e => {
+    const { value: t } = e.target;
+    this.setState({
+      ...this.state,
+      email: t
+    })
+  }
 
 
   render() {
@@ -88,7 +115,7 @@ export default class AppClass extends React.Component {
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-          <h3 id="coordinates">error</h3>
+          <h3 id="coordinates">{this.state.message}</h3>
           <h3 id="steps">You moved {this.state.steps} time{1 == this.state.steps ? "" : "s"}</h3>
         </div>
         <div id="grid">
@@ -115,6 +142,7 @@ export default class AppClass extends React.Component {
             id="email"
             type="email"
             placeholder="type email"
+            onChange={this.onChange}
           ></input>
           <input type="submit"></input>
         </form>
