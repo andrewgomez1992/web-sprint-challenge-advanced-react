@@ -1,7 +1,5 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import axios from 'axios';
-
-
 
 export default class AppClass extends React.Component {
 
@@ -32,11 +30,8 @@ export default class AppClass extends React.Component {
       this.setState({
         ...this.state,
         message: res,
-        grid: [null, null, null, null, "B", null, null, null, null],
-        steps: 0,
       })
-    }
-    )
+    })
   }
 
   getXY = () => {
@@ -107,7 +102,7 @@ export default class AppClass extends React.Component {
       message: "",
       email: "",
       steps: 0,
-      grid: [null, null, null, null, "B", null, null, null, null]
+      grid: [null, null, null, null, "B", null, null, null, null],
     })
     this.myFormRef.reset();
   }

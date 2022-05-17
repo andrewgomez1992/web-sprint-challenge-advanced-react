@@ -28,8 +28,7 @@ export default function AppFunctional(props) {
         res = e.response.data.message
       }
       )).finally((() => {
-        setMessage(res),
-          setEmail("")
+        setMessage(res)
       }
       ))
   }
@@ -84,10 +83,15 @@ export default function AppFunctional(props) {
       setGrid(n)) : setMessage(`You can't go ${t}`)
   };
 
-  const reset = (e) => {
+  const reset = () => {
     setMessage("")
     setGrid(initialGrid)
     setSteps(0)
+    ref.current.value = "";
+  }
+
+  const resetSome = () => {
+    setMessage("")
     ref.current.value = "";
   }
 
@@ -108,16 +112,16 @@ export default function AppFunctional(props) {
         }
       </div>
       <div className="info">
-        <h3 id="message">{message}</h3>
+        <h3 id="message" data-testid="error">{message}</h3>
       </div>
       <div id="keypad">
         <button id="left" onClick={getNextGrid}>LEFT</button>
         <button id="up" onClick={getNextGrid}>UP</button>
         <button id="right" onClick={getNextGrid}>RIGHT</button>
         <button id="down" onClick={getNextGrid}>DOWN</button>
-        <button id="reset" onClick={reset}>reset</button>
+        <button id="reset" data-testid="reset" onClick={reset}>reset</button>
       </div>
-      <form onSubmit={onSubmit} onSubmitCapture={reset}>
+      <form onSubmit={onSubmit} onSubmitCapture={resetSome}>
         <input
           id="email"
           type="email"
